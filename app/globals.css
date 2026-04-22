@@ -1,0 +1,356 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Background Colors - From Figma */
+  --background: #25282e;
+  --background-card: #2d313a;
+  --background-dark: #1f1f1f;
+  --background-light: #32363f;
+
+  /* Text Colors - From Figma */
+  --text-primary: #ffffff;
+  --text-secondary: #bbbbbb;
+  --text-muted: #8b8b8b;
+  --text-disabled: #666666;
+
+  /* Primary Colors */
+  --primary: #22c55e;
+  --primary-hover: #16a34a;
+  --primary-light: #4ade80;
+  --primary-foreground: #ffffff;
+
+  /* Input/Field Colors - From Figma */
+  --input-background: #2d313a;
+  --input-border: #3d424d;
+  --input-border-hover: #4d525d;
+  --input-border-focus: #22c55e;
+  --input-placeholder: #bbbbbb;
+
+  /* Semantic Colors */
+  --success: #22c55e;
+  --success-light: #4ade80;
+  --success-dark: #16a34a;
+
+  --error: #ef4444;
+  --error-light: #f87171;
+  --error-dark: #dc2626;
+
+  --warning: #f59e0b;
+  --warning-light: #fcd34d;
+  --warning-dark: #d97706;
+
+  --info: #3b82f6;
+  --info-light: #60a5fa;
+  --info-dark: #2563eb;
+
+  /* Border Colors */
+  --border: #3d424d;
+  --border-light: #4d525d;
+  --border-focus: #22c55e;
+  --border-error: #ef4444;
+
+  /* Legacy compatibility */
+  --foreground: #ffffff;
+  --card: #2d313a;
+  --card-foreground: #ffffff;
+  --popover: #2d313a;
+  --popover-foreground: #ffffff;
+  --secondary: #2d313a;
+  --secondary-foreground: #ffffff;
+  --muted: #8b8b8b;
+  --muted-foreground: #bbbbbb;
+  --accent: #22c55e;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --input: #2d313a;
+  --ring: #22c55e;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.45 0.2 142);
+  --primary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.2 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.3 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.45 0.2 142);
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.95 0 0);
+  --border: oklch(0.25 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.45 0.2 142);
+  --chart-1: oklch(0.45 0.2 142);
+  --chart-2: oklch(0.5 0.15 200);
+  --chart-3: oklch(0.4 0.12 180);
+  --chart-4: oklch(0.35 0.1 150);
+  --chart-5: oklch(0.55 0.18 170);
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.45 0.2 142);
+  --sidebar-primary-foreground: oklch(0.95 0 0);
+  --sidebar-accent: oklch(0.45 0.2 142);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.25 0 0);
+  --sidebar-ring: oklch(0.45 0.2 142);
+}
+
+@theme inline {
+  /* Fonts */
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+
+  /* Font Sizes from theme.config.ts */
+  --font-size-title: 0.9375rem; /* 15px - Title size from Figma */
+
+  /* Background Colors */
+  --color-background: var(--background);
+  --color-background-card: var(--background-card);
+  --color-background-dark: var(--background-dark);
+  --color-background-light: var(--background-light);
+
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+
+  /* Primary Colors */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* Input Colors */
+  --color-input-background: var(--input-background);
+  --color-input-border: var(--input-border);
+  --color-input-border-hover: var(--input-border-hover);
+  --color-input-border-focus: var(--input-border-focus);
+  --color-input-placeholder: var(--input-placeholder);
+
+  /* Semantic Colors */
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-success-dark: var(--success-dark);
+
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
+  --color-error-dark: var(--error-dark);
+
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-warning-dark: var(--warning-dark);
+
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-info-dark: var(--info-dark);
+
+  /* Border Colors */
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-border-focus: var(--border-focus);
+  --color-border-error: var(--border-error);
+
+  /* Legacy Compatibility */
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Border Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom Scrollbar Styles */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thumb-slate-700::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
+
+  .scrollbar-thumb-slate-700::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  /* Firefox scrollbar support */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+  }
+}
+
+input:-webkit-autofill {
+  background-color: #2d313a !important;
+}
+
+/* Fix browser autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #2d313a inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  #hero-img {
+    height: 20rem;
+  }
+  .main-title {
+    font-size: 25px;
+  }
+}
+
+@media (min-width: 1100px) {
+  #hero-img {
+    height: 26rem;
+  }
+  .main-title {
+    font-size: 38px;
+  }
+}
+
+@media (min-width: 1302px) {
+  #hero-img {
+    height: 28rem;
+  }
+  .main-title {
+    font-size: 45px;
+  }
+}
+
+@media (min-width: 1462px) {
+  #hero-img {
+    height: 30rem;
+  }
+  .main-title {
+    font-size: 54px;
+  }
+}
+
+@media (min-width: 1644px) {
+  #hero-img {
+    height: 32rem;
+  }
+  .main-title {
+    font-size: 64px;
+  }
+}
+
+@media (min-width: 1744px) {
+  #hero-img {
+    height: 35rem;
+  }
+}
+
+@media (min-width: 1844px) {
+  #hero-img {
+    height: 38rem;
+  }
+  .break-line {
+    display: none;
+  }
+  .main-title {
+    font-size: 72px;
+  }
+  .hero-para {
+    max-width: 45rem;
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 1954px) {
+  #hero-img {
+    height: 40rem;
+  }
+  .break-line {
+    display: none;
+  }
+  .main-title {
+    font-size: 78px;
+  }
+  .hero-para {
+    max-width: 48rem;
+    font-size: 30px;
+  }
+}
+
+@media (min-width: 2064px) {
+  #hero-img {
+    height: 38rem;
+  }
+  .break-line {
+    display: none;
+  }
+  .main-title {
+    font-size: 84px;
+  }
+  .hero-para {
+    max-width: 50rem;
+    font-size: 32px;
+  }
+}
