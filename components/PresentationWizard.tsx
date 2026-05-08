@@ -27,6 +27,9 @@ export interface PresentationData {
   additionalNotes: string;
   otherType?: string;
   videoFile?: File | null;
+  isFavorite: boolean;
+  creationDateTime?: any;
+  otherDetails: string;
   feedbackPreferences: {
     aiGenerated: boolean;
     peerFeedback: boolean;

@@ -9,7 +9,7 @@ export function formatDateTime(isoString: string): string {
   const date = new Date(isoString);
 
   const day = date.getDate();
-  const month = date.toLocaleString("en-US", { month: "short" }).toLowerCase();
+  const month = date.toLocaleString("en-US", { month: "short" });
   const year = date.getFullYear();
 
   const time = date.toLocaleString("en-US", {
@@ -18,7 +18,7 @@ export function formatDateTime(isoString: string): string {
     hour12: true,
   });
 
-  return `${day} ${month} ${year} - ${time}`;
+  return `${month} ${day}, ${year} - ${time}`;
 }
 
 export function getAuthToken(): string | null {

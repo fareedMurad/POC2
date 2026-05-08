@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { detectBrowser } from "@/lib/browserDetection";
 import IncompatibleBrowserDesktop from "./IncompatibleBrowserDesktop";
 import IncompatibleBrowserMobile from "./IncompatibleBrowserMobile";
+import { usePathname } from "next/navigation";
 
 interface BrowserCompatibilityCheckProps {
   children: React.ReactNode;
@@ -16,6 +17,9 @@ export default function BrowserCompatibilityCheck({
     isCompatible: boolean;
     incompatibilityReason?: "mobile" | "unsupported-os" | "unsupported-browser";
   } | null>(null);
+  const pathname = usePathname();
+
+  const isUploadRoute = pathname.startsWith("/uploadRoomPhoto/");
 
   useEffect(() => {
     // Run browser detection on client side only
@@ -32,8 +36,13 @@ export default function BrowserCompatibilityCheck({
     return null;
   }
 
-  // If browser is compatible, render children
+  // // If browser is compatible, render children
   if (browserInfo.isCompatible) {
+    return <>{children}</>;
+  }
+
+  // If browser is compatible OR route is allowed → render children
+  if (browserInfo.isCompatible || isUploadRoute) {
     return <>{children}</>;
   }
 

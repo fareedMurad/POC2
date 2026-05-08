@@ -1,6 +1,6 @@
 "use client";
 
-import { getPresentationTypeString } from "@/lib/apiServices";
+import { getPresentationTypeString } from "@/lib/apiServiceTypes";
 import { Clock, Star } from "lucide-react";
 import Link from "next/link";
 

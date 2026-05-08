@@ -8,9 +8,9 @@ import flimImg from "@/public/film.svg";
 import { useSearchParams } from "next/navigation";
 import {
   savePeerFeedback,
-  type PeerFeedbackSegment,
   getRehearsalMediaAnonymously,
 } from "@/lib/apiServices";
+import { type PeerFeedbackSegment } from "@/lib/apiServiceTypes";
 import Logo from "@/public/logo.svg";
 import Link from "next/link";
 

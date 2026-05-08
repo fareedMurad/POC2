@@ -3,6 +3,34 @@
  * Handles all backend communication with proper error handling and type safety
  */
 
+import {
+  AddToPresentationFavoritesProps,
+  AddToUserSlideDeckFavoritesProps,
+  AiFeedbackRequestDTO,
+  AiFeedbackRequestStatus,
+  BeginUploadDTO,
+  CreateMobilePanoUploadRequestProps,
+  DeliveryAnalysisResult,
+  FilterRoomLibraryPaginatedParams,
+  getPresentationTypeValue,
+  LegalDocumentsResult,
+  PagedPresentationsProps,
+  PeerFeedbackListDTO,
+  PeerFeedbackSegment,
+  PresentationData,
+  PresentationDTO,
+  RegisterProps,
+  RehearsalMediaDTO,
+  RehearsalMediaListDTO,
+  RemoveFromPresentationFavoritesProps,
+  RemoveFromUserSlideDeckFavoritesProps,
+  ResendVerificationCodeProps,
+  SignInProps,
+  UploadUserPanoRoomPhotoProps,
+  UploadUserSlideDeckProps,
+  ValidateVerificationCodeProps,
+  VerifyEmailForPasswordResetProps,
+} from "./apiServiceTypes";
 import { authFetch } from "./authFetch";
 
 // ============================================
@@ -13,320 +41,6 @@ const API_ROOT_URL =
   process.env.NEXT_PUBLIC_API_ROOT_URL ||
   // "https://alpha3-praktice-btdgghetcpbkheav.canadacentral-01.azurewebsites.net/Hub/";
   "https://alpha4-praktice-d8gcgndtazgccrhp.eastus-01.azurewebsites.net/Hub/";
-// ============================================
-// COMMON TYPES & INTERFACES
-// ============================================
-
-interface BaseApiResponse {
-  operationSuccessful: boolean;
-  errorCode?: string;
-  errorMessage?: string;
-}
-
-// ============================================
-// PRESENTATION TYPE MAPPING
-// ============================================
-
-/**
- * Maps UI presentation type strings to API numeric values
- * The API expects numeric enum values for presentationType
- */
-const PRESENTATION_TYPE_MAP: Record<string, number> = {
-  Other: 0,
-  Informative: 1,
-  Motivational: 2,
-  Elevator_Pitch: 3,
-  Keynote: 4,
-  Persuasive: 5,
-};
-
-/**
- * Reverse mapping from API numeric values to UI strings
- */
-const PRESENTATION_TYPE_REVERSE_MAP: Record<number, string> = {
-  0: "Other",
-  1: "Informative",
-  2: "Motivational",
-  3: "Elevator Pitch",
-  4: "Keynote",
-  5: "Persuasive",
-};
-
-/**
- * Convert UI presentation type to API numeric value
- */
-function getPresentationTypeValue(uiType: string): number {
-  return PRESENTATION_TYPE_MAP[
-    uiType === "Elevator Pitch" ? "Elevator_Pitch" : uiType
-  ]; // Default to Informative if unknown
-}
-
-/**
- * Convert API numeric presentation type to UI string
- * Exported for use in components that need to display presentation type
- */
-export function getPresentationTypeString(apiType: number | string): string {
-  if (typeof apiType === "string") return apiType;
-  return PRESENTATION_TYPE_REVERSE_MAP[apiType] ?? "Informative";
-}
-
-// ============================================
-// PRESENTATION TYPES
-// ============================================
-
-export interface PresentationData {
-  title: string;
-  type: string;
-  duration: number;
-  purpose: string;
-  audience: string;
-  additionalNotes: string;
-  otherType?: string;
-  videoFile?: File | null;
-  feedbackPreferences: {
-    aiGenerated: boolean;
-    peerFeedback: boolean;
-  };
-}
-
-// The actual presentation data object
-export interface Presentation {
-  presentationId?: string;
-  title?: string;
-  presentationType?: number | string;
-  purpose?: string;
-  audience?: string;
-  maxDuration?: number;
-  otherDetails?: string;
-  otherPresentationType?: string;
-  objectives?: string; // The objectives field returned from API
-  creationDateTime?: string;
-  updatedAt?: string;
-}
-
-// API response wrapper that includes operationSuccessful
-export interface PresentationDTO extends BaseApiResponse {
-  presentationDTO?: Presentation;
-  presentationObjectivesDTO?: Presentation;
-}
-
-// ============================================
-// REHEARSAL MEDIA TYPES
-// ============================================
-
-export type AiFeedbackRequestStatus =
-  | "NONE"
-  | "PROCESSING"
-  | "FAILED"
-  | "COMPLETE" // API may return "COMPLETE" without D
-  | "COMPLETED";
-
-// Rehearsal Media object
-export interface RehearsalMedia {
-  rehearsalMediaId?: string;
-  presentationId?: string;
-  aiFeedbackRequestId?: string | null;
-  title?: string;
-  rehearsalMediaType?: string;
-  fileUrl?: string;
-  thumbnailUrl?: string;
-  fileSize?: number;
-  duration?: number;
-  fileName?: string;
-  fileExtension?: string;
-  rehearsalMediaStatus?: string;
-  aiFeedbackRequestStatus?: AiFeedbackRequestStatus;
-  aiFeedbackOverallScore?: number | null;
-  totalPeerFeedbackReceived?: number;
-  uploadDateTime?: string;
-}
-
-// API response wrappers
-export interface RehearsalMediaDTO extends BaseApiResponse {
-  presentationTitle: any;
-  rehearsalMediaDTO?: RehearsalMedia;
-}
-
-export interface BeginUploadDTO extends BaseApiResponse {
-  presignedFileUrl?: string;
-  presignedThumbnailUrl?: string;
-  fileName?: string;
-  thumbnailFileName?: string;
-  rehearsalMediaId?: string;
-}
-
-export interface RehearsalMediaListDTO extends BaseApiResponse {
-  pageKey: null;
-  rehearsalMediaDTOList?: RehearsalMedia[];
-}
-
-// ============================================
-// AI FEEDBACK TYPES
-// ============================================
-
-export interface DeliveryAnalysisResult {
-  pace?: {
-    averageWordsPerMinute?: number;
-    feedback?: string;
-  };
-  energyProxy?: {
-    averageSentimentScore?: number;
-  };
-  confidenceProxy?: {
-    overallTranscriptConfidence?: number;
-  };
-  fillerWords?: {
-    totalCount?: number;
-    breakdown?: { [key: string]: number };
-  };
-}
-
-export interface AiFeedbackRequest {
-  aiFeedbackRequestId?: string;
-  rehearsalMediaId?: string;
-  presentationId?: string;
-  aiFeedbackRequestStatus?: AiFeedbackRequestStatus;
-  transcript?: string;
-  contentAnalysisResult?: string; // Full text analysis
-  deliveryAnalysisResult?: string; // JSON string that needs to be parsed
-  creationDateTime?: string;
-}
-
-export interface AiFeedbackRequestDTO extends BaseApiResponse {
-  aiFeedbackRequestDTO?: AiFeedbackRequest;
-}
-
-interface LegalDocuments {
-  ContentPolicy?: string;
-  PrivacyPolicy?: string;
-  TermsAndConditions?: string;
-}
-
-export interface LegalDocumentsResult {
-  legalDocuments: LegalDocuments;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-}
-
-export interface RegisterProps {
-  verificationRequestId(arg0: string, verificationRequestId: any): unknown;
-  name?: string;
-  email?: string;
-  password?: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface ResendVerificationCodeProps {
-  verificationRequestId?: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface ValidateVerificationCodeProps {
-  resultCode: string;
-  validationMessage: string;
-  verificationRequestId?: string;
-  verificationCode?: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface SignInProps {
-  verificationRequestId(arg0: string, verificationRequestId: any): unknown;
-  authToken: string;
-  email?: string;
-  password?: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface PagedPresentationsProps {
-  pageSize(pageSize: any): unknown;
-  presentationDTOList: never[];
-  presentations: never[];
-  pageKey: any;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface AddToPresentationFavoritesProps {
-  presentationId: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface RemoveFromPresentationFavoritesProps {
-  presentationId: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface VerifyEmailForPasswordResetProps {
-  verificationRequestId?: string;
-  email: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface ResetPasswordProps {
-  verificationRequestId?: string;
-  newPassword: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-export interface UpdateProfileProps {
-  email?: string;
-  name?: string;
-  password: string;
-  operationSuccessful: true;
-  errorMessage: string;
-  errorCode: string;
-  result?: any;
-}
-
-// ============================================
-// PEER FEEDBACK TYPES
-// ============================================
-
-export interface PeerFeedbackSegment {
-  segmentIndex: number;
-  startingFrame: number;
-  endingFrame: number;
-  feedback: string;
-}
-
-export interface PeerFeedback {
-  rehearsalMediaId?: string;
-  presentationId?: string;
-  peerFeedbackSegments?: PeerFeedbackSegment[];
-  creationDateTime?: string;
-}
-
-export interface PeerFeedbackListDTO extends BaseApiResponse {
-  pageKey: null;
-  peerFeedbackDTOList?: PeerFeedback[];
-}
 
 // ============================================
 // HELPER FUNCTIONS
@@ -1555,7 +1269,7 @@ export async function addToPresentationFavorites(
 }
 
 /**
- * Remove From Presentation Favorites
+ * POST - Remove From Presentation Favorites
  */
 export async function removeFromPresentationFavorites(
   presentationId: string
@@ -1585,5 +1299,549 @@ export async function removeFromPresentationFavorites(
     return result;
   } catch (error) {
     handleApiError(error, "RemoveFromPresentationFavorites");
+  }
+}
+
+// ============================================
+// POC 3 APIs
+// ============================================
+
+/**
+ * POST - Create Mobile Pano Upload Request
+ */
+export async function CreateMobilePanoUploadRequest(
+  presentationId: string
+): Promise<CreateMobilePanoUploadRequestProps> {
+  try {
+    const url = buildApiUrl("CreateMobilePanoUploadRequest", {
+      presentationId: presentationId,
+    });
+    const response = await authFetch(url, {
+      method: "POST",
+      // No Content-Type header - API expects query params only, no body
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: CreateMobilePanoUploadRequestProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage ||
+          "Failed to remove the presentation from favorites!"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "CreateMobilePanoUploadRequest");
+  }
+}
+
+/**
+ * GET - Get Mobile Pano Upload Request
+ */
+export async function GetMobilePanoUploadRequest(
+  presentationId: string,
+  mobilePanoUploadRequestId: string
+) {
+  try {
+    const url = buildApiUrl("GetMobilePanoUploadRequest", {
+      presentationId,
+      mobilePanoUploadRequestId,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve paged presentations"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetMobilePanoUploadRequest");
+  }
+}
+
+/**
+ * GET - Get User Pano Room Photos
+ */
+export async function getUserPanoRoomPhotos(
+  presentationId: string,
+  pageKey: string
+) {
+  try {
+    const url = buildApiUrl("GetPagedUserPanoRoomPhotos", {
+      presentationId,
+      pageKey,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve paged presentations"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetUserPanoRoomPhotos");
+  }
+}
+
+/**
+ * POST - upload User Pano Room Photo
+ */
+
+export async function uploadUserPanoRoomPhoto(
+  presentationId: string,
+  mobilePanoUploadRequestId: string,
+  panoRoomPhotoFile: File,
+  panoRoomThumbnailFile: File,
+  authToken: string
+): Promise<UploadUserPanoRoomPhotoProps> {
+  try {
+    // 👇 attach params here
+    const url = buildApiUrl(
+      `UploadUserPanoRoomPhoto?presentationId=${presentationId}&mobilePanoUploadRequestId=${mobilePanoUploadRequestId}&authToken=${authToken}`
+    );
+
+    const formData = new FormData();
+    formData.append("panoRoomPhotoFile", panoRoomPhotoFile);
+    formData.append("panoRoomThumbnailFile", panoRoomThumbnailFile);
+
+    const headers: any = {
+      authToken: authToken,
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: UploadUserPanoRoomPhotoProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to upload pano room photo!"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "UploadUserPanoRoomPhoto");
+  }
+}
+
+/**
+ * GET - Get User Pano Room Photo
+ */
+export async function getUserPanoRoomPhoto(
+  presentationId: string,
+  userPanoRoomPhotoId: string
+) {
+  try {
+    const url = buildApiUrl("GetUserPanoRoomPhoto", {
+      presentationId,
+      userPanoRoomPhotoId,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve paged presentations"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetUserPanoRoomPhoto");
+  }
+}
+
+/**
+ * GET - Get Room Library Filters
+ */
+export async function getRoomLibraryFilters(presentationId: string) {
+  try {
+    const url = buildApiUrl("GetRoomLibraryFilters", {
+      presentationId,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve paged presentations"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetRoomLibraryFilters");
+  }
+}
+
+/**
+ * GET - Filter Room Library Paginated
+ */
+export async function filterRoomLibraryPaginated({
+  pageNumber,
+  venueTypes = [],
+  audienceSizes = [],
+  roomMediaTypes = [],
+}: FilterRoomLibraryPaginatedParams) {
+  try {
+    const queryParams: Record<string, string> = {
+      pageNumber: String(pageNumber),
+    };
+
+    venueTypes.forEach((type, index) => {
+      queryParams[`venueTypes[${index}]`] = type;
+    });
+
+    audienceSizes.forEach((size, index) => {
+      queryParams[`audienceSizes[${index}]`] = size;
+    });
+
+    roomMediaTypes.forEach((type, index) => {
+      queryParams[`roomMediaTypes[${index}]`] = type;
+    });
+
+    const url = buildApiUrl("FilterRoomLibraryPaginated", queryParams);
+
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve paginated room library"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "FilterRoomLibraryPaginated");
+  }
+}
+
+/**
+ * GET - Get Favorite Library Rooms
+ */
+export async function getFavoriteLibraryRooms(
+  favoriteLibraryRoomIds: string[]
+) {
+  try {
+    const queryParams: Record<string, string> = {};
+
+    favoriteLibraryRoomIds.forEach((id, index) => {
+      queryParams[`favoriteLibraryRoomIds[${index}]`] = id;
+    });
+
+    const url = buildApiUrl("GetFavoriteLibraryRooms", queryParams);
+
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve favorite library rooms"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetFavoriteLibraryRooms");
+  }
+}
+
+/**
+ * POST - Upload User Slide Deck
+ */
+
+export async function uploadUserSlideDeck(
+  presentationId: string,
+  fileHash: string,
+  slideDeckFile: File,
+  authToken: string
+): Promise<UploadUserSlideDeckProps> {
+  try {
+    // 👇 attach params here
+    const url = buildApiUrl(
+      `UploadUserSlideDeck?presentationId=${presentationId}&fileHash=${fileHash}`
+    );
+
+    const formData = new FormData();
+    formData.append("slideDeckFile", slideDeckFile);
+    // formData.append("panoRoomThumbnailFile", panoRoomThumbnailFile);
+
+    const headers: any = {
+      authToken: authToken,
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: UploadUserSlideDeckProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to upload user slide deck!"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "UploadUserSlideDeck");
+  }
+}
+
+/**
+ * GET - Get Paged User Slide Decks
+ */
+export async function getPagedUserSlideDecks(
+  presentationId: string,
+  pageKey: string
+) {
+  try {
+    const url = buildApiUrl("GetPagedUserSlideDecks", {
+      presentationId,
+      pageKey,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to retrieve user slide decks"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetPagedUserSlideDecks");
+  }
+}
+
+/**
+ * GET - Get Paged Favorite User Slide Decks
+ */
+export async function getPagedFavoriteUserSlideDecks(
+  presentationId: string,
+  pageKey: string
+) {
+  try {
+    const url = buildApiUrl("GetPagedFavoriteUserSlideDecks", {
+      presentationId,
+      pageKey,
+    });
+    const response = await authFetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: PagedPresentationsProps = await response.json();
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage ||
+          "Failed to retrieve Paged Favorite User Slide Decks"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "GetPagedFavoriteUserSlideDecks");
+  }
+}
+
+/**
+ * POST - Add To User Slide Deck Favorites
+ */
+export async function AddToUserSlideDeckFavorites(
+  presentationId: string,
+  userSlideDeckid: string
+): Promise<AddToUserSlideDeckFavoritesProps | null> {
+  try {
+    const url = buildApiUrl("AddToUserSlideDeckFavorites", {
+      presentationId,
+      userSlideDeckid,
+    });
+
+    const response = await authFetch(url, {
+      method: "POST",
+      // No Content-Type header - API expects query params only, no body
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // IMPORTANT:
+    // Some backend responses are empty
+    const text = await response.text();
+
+    if (!text) {
+      return {
+        operationSuccessful: true,
+      } as AddToUserSlideDeckFavoritesProps;
+    }
+
+    const result: AddToUserSlideDeckFavoritesProps = JSON.parse(text);
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage || "Failed to add User Slide Deck Favorites!"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "AddToUserSlideDeckFavorites");
+
+    return null;
+  }
+}
+
+/**
+ * POST - Remove From User Slide Deck Favorites
+ */
+export async function RemoveFromUserSlideDeckFavorites(
+  presentationId: string,
+  userSlideDeckid: string
+): Promise<RemoveFromUserSlideDeckFavoritesProps | null> {
+  try {
+    const url = buildApiUrl("RemoveFromUserSlideDeckFavorites", {
+      presentationId,
+      userSlideDeckid,
+    });
+
+    const response = await authFetch(url, {
+      method: "POST",
+      // No Content-Type header - API expects query params only, no body
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // IMPORTANT:
+    // Some backend responses are empty
+    const text = await response.text();
+
+    if (!text) {
+      return {
+        operationSuccessful: true,
+      } as RemoveFromUserSlideDeckFavoritesProps;
+    }
+
+    const result: RemoveFromUserSlideDeckFavoritesProps = JSON.parse(text);
+
+    if (!result.operationSuccessful) {
+      throw new Error(
+        result.errorMessage ||
+          "Failed to remove from User Slide Deck Favorites!"
+      );
+    }
+
+    return result;
+  } catch (error) {
+    handleApiError(error, "RemoveFromUserSlideDeckFavorites");
+
+    return null;
   }
 }

@@ -14,6 +14,8 @@ import PresentaionIcon from "@/public/presentations.svg";
 import VideoUploadsIcon from "@/public/video-uploads.svg";
 import AIFeedbackIcon from "@/public/ai-feedback.svg";
 import ChroneIcon from "@/public/chrone.svg";
+import RoomsUploadIcon from "@/public/rooms-upload.svg";
+import DecksIcon from "@/public/deck-upoads.svg";
 import { Clock } from "lucide-react";
 
 interface userLimitsProps {
@@ -96,7 +98,7 @@ export default function ProfilePage() {
       <Header />
 
       <div className="flex flex-1 items-center justify-center flex-col px-3 md:px-4 py-5 md:py-10">
-        <div className="flex justify-between items-center w-full max-w-4xl bg-[#25282E] rounded-xl px-4 md:px-8 py-8 mb-8">
+        <div className="flex justify-between items-center w-full max-w-3xl bg-[#25282E] rounded-xl px-4 md:px-8 py-8 mb-8">
           <div className="flex items-end">
             <div className="mr-3">
               <h3 className="text-xl font-semibold">{profile?.name}</h3>
@@ -119,7 +121,7 @@ export default function ProfilePage() {
             </button>
           </Link>
         </div>
-        <div className="w-full max-w-4xl bg-[#25282E] rounded-xl">
+        <div className="w-full max-w-3xl bg-[#25282E] rounded-xl">
           <div className="flex justify-between items-center border-b px-4 md:px-8 pt-8 pb-2">
             <h1 className="text-white text-2xl font-semibold text-center mb-6">
               This Month
@@ -152,10 +154,22 @@ export default function ProfilePage() {
                 title="AI Feedback"
                 icon={AIFeedbackIcon}
               />
+              <ProfileCard
+                value={userStats?.mtD_PanoPhotoUploads || 0}
+                total={userLimits?.RoomUploads || 0}
+                title="Room Uploads"
+                icon={RoomsUploadIcon}
+              />
+              <ProfileCard
+                value={userStats?.mtD_SlideDeckUploads || 0}
+                total={userLimits?.DeckUploads || 0}
+                title="Slide Deck Uploads"
+                icon={DecksIcon}
+              />
             </div>
           </div>
         </div>
-        <div className="flex justify-between items-center w-full max-w-4xl bg-[#25282E] rounded-xl px-4 md:px-8 py-8 mt-8">
+        <div className="flex justify-between items-center w-full max-w-3xl bg-[#25282E] rounded-xl px-4 md:px-8 py-8 mt-8">
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center">
               <div className="bg-[#1A1D23] w-14 h-14 rounded-full flex justify-center items-center">

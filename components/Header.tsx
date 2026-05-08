@@ -62,13 +62,6 @@ export default function Header() {
               title="Home"
             />
             <HeaderButton
-              link={RehearseToolLink}
-              openInNewtab={true}
-              icon={RehearsalIcon}
-              lightIcon={RehearsalLightIcon}
-              title="Rehearse"
-            />
-            <HeaderButton
               link={"/profile"}
               openInNewtab={false}
               icon={UsersIcon}

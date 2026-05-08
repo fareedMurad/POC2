@@ -28,13 +28,14 @@ import {
   getAiFeedbackRequest,
   getpagedPeerFeedbackList,
   getRehearsalMedia,
-  type AiFeedbackRequest,
-  type PeerFeedback,
-  type DeliveryAnalysisResult,
-  type RehearsalMedia,
   submitAiFeedbackRequest,
   getPresentation,
 } from "@/lib/apiServices";
+import {
+  type AiFeedbackRequest,
+  type PeerFeedback,
+  type DeliveryAnalysisResult,
+} from "@/lib/apiServiceTypes";
 import {
   parseDeliveryMetrics,
   getTrianglePositionClass,
